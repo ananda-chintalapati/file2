@@ -1,0 +1,47 @@
+---
+
+- hosts: localhost
+  vars:
+     region: us-west-2
+  tasks:
+    - name: Get my current IP address
+      uri:
+        url: http://checkip.amazonaws.com/
+        return_content: yes
+      register: my_ip
+
+    - name: capture public key
+      debug: var=k_item
+      with_file: 
+        - "~/.ssh/id_rsa.pub"
+
+    - ec2_ami_find:
+        aws_access_key: AKIAIAHYTLHZZDTHVEZA
+        aws_secret_key: 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
+        name: "Ubuntu Server 14.04 LTS (HVM)*"
+        sort: name
+      name: Search Image
+      register: image_search
+
+    - name: Create simple security group
+      ec2_group:
+        aws_access_key: AKIAIAHYTLHZZDTHVEZA
+        aws_secret_key: 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
+        name: dbservers
+        description: A security group for my current IP
+
+
+    - name: Create EC2 instances
+      ec2:
+        aws_access_key: AKIAIAHYTLHZZDTHVEZA
+        aws_secret_key: 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
+        key_name: qa
+        wait: yes
+        instance_tags:
+           application: db
+        count_tag:
+           application: db
+        user_data: |
+                   #!/bin/bash
+                   echo "{{ key_item }}" >> /root/.ssh/authorized_keys
+      register: ec2_master
