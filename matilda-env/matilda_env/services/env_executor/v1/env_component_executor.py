@@ -169,10 +169,6 @@ def install_k8s_service(service, master_ip):
     print response
 
 def install_service(service, hosts):
-    if service == 'tomcat':
-        for host in hosts:
-            tomcat.install_tomcat(host)
-        return True
     response = service_base.install_service(service, hosts)
     print response
     return response

@@ -4,6 +4,8 @@ import logging
 from matilda_env.db import api as db_api
 from matilda_env.client import rpcapi
 
+from matilda_env.api.controller import app_handler_poc
+
 LOG = logging.getLogger(__name__)
 
 def save_sn_request(payload):
@@ -62,13 +64,26 @@ def process_request(req_id):
 def process_ritms(ritms):
     return True
 
-def process_create_env_request(payload, source='ServiceNow', version='1'):
+def process_create_env_request_old(payload, source='ServiceNow', version='1'):
     LOG.info('Processing request with version %r' % version)
     cntx = {'req_id': str(uuid.uuid4())}
     rpc = rpcapi.RpcAPI()
     LOG.info('Posting payload %r' % payload)
     rpc.invoke_notifier(ctxt=cntx, payload=payload,
                         source=source, version=version, action='deploy_env')
+
+def process_create_env_request(payload, source='ServiceNow', version='1'):
+    LOG.info('Processing request with version %r' % version)
+    cntx = {'req_id': str(uuid.uuid4())}
+    if 'ser_cat_ds' in payload['service_info']:
+        app_handler_poc.install_database()
+    else:
+        app_handler_poc.install_webserver()
+    rpc = rpcapi.RpcAPI()
+    LOG.info('Posting payload %r' % payload)
+    rpc.invoke_notifier(ctxt=cntx, payload=payload,
+                        source=source, version=version, action='deploy_env')
+
 
 def process_install_service_request(payload, source='ServiceNow', version='1'):
     LOG.info('Processing request with version %r' % version)
