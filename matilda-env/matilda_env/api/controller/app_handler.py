@@ -76,13 +76,13 @@ def process_create_env_request(payload, source='ServiceNow', version='1'):
     LOG.info('Processing request with version %r' % version)
     cntx = {'req_id': str(uuid.uuid4())}
     if 'ser_cat_ds' in payload['service_info']:
-        app_handler_poc.install_database()
+        app_handler_poc.install_database(payload)
     else:
-        app_handler_poc.install_webserver()
-    rpc = rpcapi.RpcAPI()
-    LOG.info('Posting payload %r' % payload)
-    rpc.invoke_notifier(ctxt=cntx, payload=payload,
-                        source=source, version=version, action='deploy_env')
+        app_handler_poc.install_webserver(payload)
+    # rpc = rpcapi.RpcAPI()
+    # LOG.info('Posting payload %r' % payload)
+    # rpc.invoke_notifier(ctxt=cntx, payload=payload,
+    #                     source=source, version=version, action='deploy_env')
 
 
 def process_install_service_request(payload, source='ServiceNow', version='1'):

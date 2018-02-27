@@ -12,9 +12,9 @@ def get_hosts(role):
         'webserver': ['10.118.135.148'],
         'db': ['10.118.128.95']
     }
-    return []
+    return hosts[role]
 
-def install_webserver(service='tomcat', hosts=get_hosts('webserver'), warfile_loc=None, warfile_name=None):
+def install_webserver(payload, service='tomcat', hosts=get_hosts('webserver'), warfile_loc=None, warfile_name=None):
     if warfile_name == None:
         warfile_name = 'samplepoc.war'
 
@@ -23,7 +23,10 @@ def install_webserver(service='tomcat', hosts=get_hosts('webserver'), warfile_lo
 
     install_payload = {
         'service': service,
-        'hosts': hosts
+        'hosts': hosts,
+        'u_ritm_no': payload['ritm_no'],
+        'u_request_type': payload['u_request_type'],
+        'u_name': payload['u_name']
     }
 
     process_install_service_request(install_payload)
@@ -35,15 +38,23 @@ def install_webserver(service='tomcat', hosts=get_hosts('webserver'), warfile_lo
             'password': None,
             'target_server': hosts[0],
             'warfile_path': warfile_loc,
-            'warfile_name': warfile_name
-        }
+            'warfile_name': warfile_name,
+            'u_ritm_no': payload['ritm_no'],
+            'u_request_type': payload['u_request_type'],
+            'u_name': payload['u_name']
+
+            }
     }
     process_deploy_app_request(deploy_payload)
 
-def install_database(service='mysql', hosts=get_hosts('database'), warfile_loc=None, warfile_name=None):
+def install_database(payload, service='mysql', hosts=get_hosts('db'), warfile_loc=None, warfile_name=None):
     install_payload = {
         'service': service,
-        'hosts': hosts
+        'hosts': hosts,
+        'u_ritm_no': payload['ritm_no'],
+        'u_request_type': payload['u_request_type'],
+        'u_name': payload['u_name']
+
     }
 
     process_install_service_request(install_payload)

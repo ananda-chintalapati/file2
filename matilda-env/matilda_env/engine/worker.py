@@ -107,7 +107,9 @@ class WorkerThread(threading.Thread):
                 ev1.execute_payload(payload)
             elif action == 'install_service':
                 ev1.install_service(payload['service'], payload['hosts'])
+                ev1.send_response_to_sn(payload, payload['hosts'])
             elif action == 'deploy_app':
                 ev1.deploy_application_to_wl(payload['args'], payload['hosts'])
+                ev1.send_response_to_sn(payload, payload['hosts'])
         else:
             ev2.execute_payload(payload)

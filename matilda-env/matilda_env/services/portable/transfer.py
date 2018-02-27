@@ -97,6 +97,7 @@ def execute_script(script_loc, script_name, host, port=22, username=getpass.getu
 
 def execute_command(command, host, port=22, username=getpass.getuser(), password=None, change_user='root'):
     client = SSHClient()
+    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     client.load_system_host_keys()
     client.connect(host, username=username, password=password)
     stdin, stdout, stderr = client.exec_command(command)

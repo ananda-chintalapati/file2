@@ -3,7 +3,7 @@ from matilda_env.services.portable import util
 
 def install_tomcat(host, username=None, password=None):
     tomcat_tar_file = 'apache-tomcat-7.0.85.tar.gz'
-    jdk_tar_file = 'jdk-8u162-linux-x64.tar.gz'
+    jdk_tar_file = 'jdk-8u161-linux-x64.tar.gz'
     source_dir = '/opt/matilda/matilda-env/matilda_env/services/portable/tomcat'
     transfer.sftp_file(source_dir + '/' + tomcat_tar_file, tomcat_tar_file, '/tmp', host, 22, username, password)
     transfer.sftp_file(source_dir + '/' + jdk_tar_file, jdk_tar_file, '/tmp', host, 22, username, password)

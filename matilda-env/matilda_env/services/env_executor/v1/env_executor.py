@@ -178,9 +178,9 @@ def send_response_to_sn(payload, public_ip):
         'u_storage_name': '',
         'u_storage_ip':''
        }
-    url = 'https://dev21017.service-now.com.service-now.com/api/now/table/u_server_temp'
-    username = 'qa.user'
-    password = 'Cnet123$'
+    url = 'https://vzndemo.service-now.com.service-now.com/api/now/table/u_server_temp'
+    username = 'svc-Matilda'
+    password = '64DK2*5u7H34UxN'
     headers = {'Content-type': 'application/json'}
     LOG.info('Sending response to ServiceNow: %r' % data)
     resp = requests.post(url=url, auth=(username, password), data=data, headers=headers)
