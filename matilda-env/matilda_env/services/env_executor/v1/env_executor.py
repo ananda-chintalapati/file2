@@ -6,6 +6,7 @@ from matilda_env.db import api as db_api
 from matilda_env.services.env_executor.v1 import env_component_executor as ec
 from matilda_env.services.jenkins import JenkinsManager as jc
 from matilda_env.services.env_executor.v1 import task_db_handler as td
+from matilda_env.helper import encryptor
 
 LOG = logging.getLogger(__name__)
 
@@ -180,7 +181,7 @@ def send_response_to_sn(payload, public_ip):
        }
     url = 'https://vzndemo.service-now.com.service-now.com/api/now/table/u_server_temp'
     username = 'svc-Matilda'
-    password = '64DK2*5u7H34UxN'
+    password = encryptor.decrypt('gAAAAABaldARPcxSZJApTXUMgu310N40dtC134JRs3xTo9l1kFtyjKXnSWzBRuse_w5DnjJlJ15zb6xTp7m2DCT33Fd2QrCwPQ==')
     headers = {'Content-type': 'application/json'}
     LOG.info('Sending response to ServiceNow: %r' % data)
     resp = requests.post(url=url, auth=(username, password), data=data, headers=headers)
