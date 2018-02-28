@@ -104,7 +104,8 @@ class WorkerThread(threading.Thread):
         LOG.info('Execute payload with version %r' % version)
         if version == '1':
             if action == 'deploy_env':
-                ev1.execute_payload(payload)
+                #ev1.execute_payload(payload)
+                ev1.deploy_env(payload)
             elif action == 'install_service':
                 ev1.install_service(payload['service'], payload['hosts'])
                 ev1.send_response_to_sn(payload, payload['hosts'])

@@ -30,7 +30,7 @@ def install_webserver(payload, service='tomcat', hosts=get_hosts('webserver'), w
     }
 
     process_install_service_request(install_payload)
-    time.sleep(180)
+    #time.sleep(180)
     deploy_payload = {
             'hosts': hosts,
             'args': {

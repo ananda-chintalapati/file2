@@ -4,11 +4,19 @@ import logging
 
 from matilda_env.db import api as db_api
 from matilda_env.services.env_executor.v1 import env_component_executor as ec
-from matilda_env.services.jenkins import JenkinsManager as jc
+from matilda_env.client.jenkins.jenkins_client import JenkinsClient as jc
+from matilda_env.client.jenkins import jenkins_manager as jm
 from matilda_env.services.env_executor.v1 import task_db_handler as td
 from matilda_env.helper import encryptor
 
 LOG = logging.getLogger(__name__)
+
+def get_hosts(role):
+    hosts = {
+        'webserver': ['10.118.135.148'],
+        'db': ['10.118.128.95']
+    }
+    return hosts[role]
 
 def execute_environment(payload):
     if 'request' in payload.keys():
@@ -130,11 +138,34 @@ def execute_payload(payload):
     td.save_task('send_response_to_sn', payload['u_request_type'], payload['ritm_no'], payload['request_no'], 'Success',
                  '', resp)
 
+
+def deploy_env(payload):
+    print 'About to trigger environment %r' % payload
+    if 'server_info' in payload.keys():
+        name = payload['server_info'].get('name')
+        flavor = payload.get('flavor_info').get('flavor')
+        ip_address = jm.create_instance(name, flavor)
+        install_service('tomcat', get_hosts('webserver'))
+        args = {
+            'username': '',
+            'password': '',
+            'target_server': get_hosts('webserver'),
+            'warfile_path': '/tmp',
+            'warfile_name': 'samplepoc.war'
+        }
+        deploy_application_to_wl(args, get_hosts('webserver'))
+        send_response_to_sn(payload, get_hosts('webserver'))
+    if 'application_info' in payload.keys():
+        deploy_application_to_wl(args, get_hosts('webserver'))
+        send_response_to_sn(payload, get_hosts('webserver'))
+
+
 def install_service(service, ip_list):
     LOG.info('Waiting to finish instance creation steps')
     resp = ec.install_service(service, ip_list)
     LOG.info('Service creation task completed')
     LOG.debug('Service response %r' % resp)
+    print 'Service response %r' % resp
 
 def create_security_group(payload, vpc_id):
     ec.create_sec_group()
@@ -142,8 +173,10 @@ def create_security_group(payload, vpc_id):
 
 def deploy_application_to_wl(args, ip_list):
     LOG.info('Waiting to finish instance creation steps')
+    print 'Waiting to finish instance creation steps'
     resp = ec.deploy_app(args, ip_list)
     LOG.info('Service creation task completed')
+    print 'Application response %r' % resp
     LOG.debug('Service response %r' % resp)
 
 

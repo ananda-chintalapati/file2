@@ -1,0 +1,65 @@
+Started by user admin
+Building on master in workspace /var/lib/jenkins/workspace/mat_sample_build
+ > git rev-parse --is-inside-work-tree # timeout=10
+Fetching changes from the remote Git repository
+ > git config remote.origin.url http://192.168.20.142/root/sample-poc.git # timeout=10
+Fetching upstream changes from http://192.168.20.142/root/sample-poc.git
+ > git --version # timeout=10
+using GIT_ASKPASS to set credentials 
+ > git fetch --tags --progress http://192.168.20.142/root/sample-poc.git +refs/heads/*:refs/remotes/origin/*
+ > git rev-parse refs/remotes/origin/master^{commit} # timeout=10
+ > git rev-parse refs/remotes/origin/origin/master^{commit} # timeout=10
+Checking out Revision 22ee2926fe367c9818b63d13d97c114402f922dd (refs/remotes/origin/master)
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f 22ee2926fe367c9818b63d13d97c114402f922dd
+Commit message: "Initial Commit"
+ > git rev-list 22ee2926fe367c9818b63d13d97c114402f922dd # timeout=10
+[mat_sample_build] $ mvn install
+[INFO] Scanning for projects...
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building samplepoc.war 1.0
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-resources-plugin:2.6:resources (default-resources) @ samplepoc.war ---
+[WARNING] Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] Copying 2 resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.2:compile (default-compile) @ samplepoc.war ---
+[INFO] Changes detected - recompiling the module!
+[WARNING] File encoding has not been set, using platform encoding UTF-8, i.e. build is platform dependent!
+[INFO] Compiling 5 source files to /var/lib/jenkins/workspace/mat_sample_build/target/classes
+[INFO] 
+[INFO] --- maven-resources-plugin:2.6:testResources (default-testResources) @ samplepoc.war ---
+[WARNING] Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] skip non existing resourceDirectory /var/lib/jenkins/workspace/mat_sample_build/src/test/resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.2:testCompile (default-testCompile) @ samplepoc.war ---
+[INFO] No sources to compile
+[INFO] 
+[INFO] --- maven-surefire-plugin:2.17:test (default-test) @ samplepoc.war ---
+[INFO] No tests to run.
+[INFO] 
+[INFO] --- maven-war-plugin:2.4:war (default-war) @ samplepoc.war ---
+[INFO] Packaging webapp
+[INFO] Assembling webapp [samplepoc.war] in [/var/lib/jenkins/workspace/mat_sample_build/target/SamplePOC]
+[INFO] Processing war project
+[INFO] Copying webapp resources [/var/lib/jenkins/workspace/mat_sample_build/src/main/webapp]
+[INFO] Webapp assembled in [209 msecs]
+[INFO] Building war: /var/lib/jenkins/workspace/mat_sample_build/target/SamplePOC.war
+[INFO] 
+[INFO] --- maven-install-plugin:2.5.2:install (default-install) @ samplepoc.war ---
+[INFO] Installing /var/lib/jenkins/workspace/mat_sample_build/target/SamplePOC.war to /var/lib/jenkins/.m2/repository/com/sample/poc/samplepoc.war/1.0/samplepoc.war-1.0.war
+[INFO] Installing /var/lib/jenkins/workspace/mat_sample_build/pom.xml to /var/lib/jenkins/.m2/repository/com/sample/poc/samplepoc.war/1.0/samplepoc.war-1.0.pom
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 8.386 s
+[INFO] Finished at: 2018-02-28T10:03:30-06:00
+[INFO] Final Memory: 19M/58M
+[INFO] ------------------------------------------------------------------------
+SSH: Connecting from host [ubuntu]
+SSH: Connecting with configuration [deployment] ...
+SSH: Disconnecting configuration [deployment] ...
+SSH: Transferred 0 file(s)
+Finished: SUCCESS
