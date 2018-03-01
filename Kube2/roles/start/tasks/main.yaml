@@ -1,0 +1,34 @@
+---  
+- name: copy network files
+  template:
+     src: weavenet.yaml
+     dest: /opt
+- name: create network
+  command: kubectl create -f /opt/weavenet.yaml
+
+- name: wait for 30 sec
+  wait_for: timeout=30
+#- name: create directory
+#  command: mkdir /opt/heapster
+
+- name: copy files
+  copy:
+    src: ../files/heapster
+    dest: /opt
+
+- name: create heapster
+  command: kubectl create -f /opt/heapster/
+
+#- name: copy files
+#  template: 
+#     src: heapster-rbac.yaml
+#     dest: /opt
+
+#- name: create rbac
+#  command: kubectl create -f /opt/heapster-rbac.yaml
+#- name: copyfiles
+#  command: cp /etc/kubernetes/admin.conf $HOME/
+#- name: copy
+#  command: chown $(id -u):$(id -g) $HOME/admin.conf
+#- name: copy
+#  command: export KUBECONFIG=$HOME/admin.conf

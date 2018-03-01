@@ -1,0 +1,58 @@
+---
+
+# Implements the Ubuntu portion of Step 1 of http://kubernetes.io/docs/getting-started-guides/kubeadm/
+
+# curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
+# cat <<EOF > /etc/apt/sources.list.d/kubernetes.list
+# deb http://apt.kubernetes.io/ kubernetes-xenial main
+# EOF
+# apt-get update
+# apt-get install -y docker.io kubelet kubeadm kubectl kubernetes-cni
+- name: Install python
+  apt:
+    name: python
+    state: present
+    update_cache: yes
+  
+- name: Add Google key to apt
+  apt_key:
+    url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+    state: present
+
+- name: Add Kubernetes apt repo
+  apt_repository:
+    repo: 'deb http://apt.kubernetes.io/ kubernetes-xenial main'
+    filename: kubernetes
+    state: present
+
+- name: Install packages
+  apt: 
+    name: aptitude
+    state: present
+#  command: apt install aptitude
+
+- name: Install packages aptitude
+  command: aptitude install install kubectl=1.7.6-00 kubelet=1.7.6-00 kubernetes-cni=0.6.0-00 -y 
+
+#- name: Download my_package
+#  get_url: 
+#    url="https://apt.k8s.io/pool/kubeadm_1.5.0-alpha.2-421-a6bea3d79b8bba-00_amd64"
+#    dest="/tmp/"
+#  when: vagrant_check_deb.rc == 1
+
+
+- name: Install packages old
+  command: curl -Lo /tmp/old-kubeadm.deb https://apt.k8s.io/pool/kubeadm_1.7.6-00_amd64_68f5bae22936d6c609364154bdd4ffffb91ffb502da6cf54647de04026bf142c.deb
+
+- name: Install packages kube
+  command: dpkg -i /tmp/old-kubeadm.deb
+
+#- name: Install my_package
+#  apt: deb="/tmp/old-kubeadm.deb"
+#  sudo: true
+#  when: vagrant_check_deb.rc == 1
+
+- name: Install docker
+  apt:
+    name: docker.io
+    state: present

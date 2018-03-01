@@ -1,0 +1,13 @@
+---
+# - name: labelling the nodes
+
+
+
+
+- name: clone yaml file
+  git:
+    repo: http://192.168.20.142/chandu/kubernetesrepo.git
+    dest: /opt/weblogic
+
+- name: Install weblogic
+  command: kubectl create -f /opt/weblogic

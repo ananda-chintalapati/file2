@@ -1,0 +1,17 @@
+---
+#- name: create directory
+#  file: path=/opt/heapster state=directory
+#- name: Install heapster
+#  template:
+#    src: heapster
+#    dest: /opt/heapster
+#    remote_src: yes
+#    directory_mode: yes
+ 
+- name: clone yaml file
+  git:
+    repo: http://192.168.20.142/chandu/heapster.git
+    dest: /opt/repo
+
+- name: Install heapster
+  command: kubectl create -f /opt/repo/heapster

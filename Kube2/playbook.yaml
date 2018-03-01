@@ -1,0 +1,165 @@
+---
+
+- hosts: localhost
+  gather_facts: false
+
+  roles:
+
+    - role: admission_token
+      tags:
+        - token
+
+  tasks:
+
+    - debug:
+        var: admission_token
+      tags:
+        - token
+
+#- hosts: master
+#  become: true
+#  gather_facts: False
+#  tasks:
+#    - name: Install Python
+#      raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
+#      raw: apt-get update -y && apt-get install python -y
+#- hosts: nodes
+#  become: true
+#  gather_facts: False
+#  tasks:
+#    - name: Install Python
+#      raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
+
+- hosts: "{{ hostvars.localhost.groups.master | join(',') }}"
+
+  become: true
+
+  roles:
+
+    - role: kubeadm_install
+      tags:
+        - repo
+        - master
+        - nodes          
+
+  tasks:
+
+    # Implements Step 2 of http://kubernetes.io/docs/getting-started-guides/kubeadm/
+    - name: kubeadm reset
+      command: kubeadm reset
+    - name: Initialize master
+      command: kubeadm init --token {{ hostvars.localhost.admission_token }}
+      args:
+        creates: /etc/kubernetes/pki
+        creates: /etc/kubernetes/controller-manager.conf
+        creates: /etc/kubernetes/scheduler.conf
+        creates: /etc/kubernetes/admin.conf
+        creates: /etc/kubernetes/kubelet.conf
+      register: master_init
+      ignore_errors: true
+      tags:
+        - master
+        - init
+
+    - debug:
+        var: master_init.stdout_lines
+
+      # Not 100% sure that the creates clause is correct
+
+#      file: path= $HOME/.kube/config owner=0 group=0 mode=0600 state=file recurse=yes
+- hosts: "{{ hostvars.localhost.groups.nodes | join(',') }}"
+
+  become: true
+
+  roles:
+
+    - role: kubeadm_install
+      tags:
+        - repo
+        - master
+        - nodes    
+
+  tasks:
+
+    # Implements Step 3 of http://kubernetes.io/docs/getting-started-guides/kubeadm/
+
+    - set_fact:
+        master_ip_address: '{{ master_ip_address_configured }}'
+      when: master_ip_address_configured is defined
+
+    - set_fact:
+        master_ip_address: "{{ hostvars[groups['master'][0]]['ansible_default_ipv4']['address'] }}"
+      when: master_ip_address_configured is not defined
+    - name: kubeadm reset
+      command: kubeadm reset
+    - name: Join nodes to cluster
+      command: kubeadm join --token {{ hostvars.localhost.admission_token }} {{  master_ip_address }}:6443
+      args:
+        creates: /etc/kubernetes/kubelet.conf
+      register: node_join
+      ignore_errors: true
+      tags:
+        - nodes
+        - join
+
+    - debug:
+        var: node_join.stdout_lines
+
+      # Not 100% sure that the creates clause is correct
+- hosts: master
+  tasks:
+    - name: copy admin.conf
+      command: "{{ item }}"
+      with_items:
+      - mkdir -p $HOME/.kube
+      - cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+
+#- hosts: master
+#  tasks:
+#    - name: Fix  permissions
+#     - file: path= $HOME/.kube/config owner=0 group=0 mode=0600 state=file recurse=yes
+#      command: chown $(id -u):$(id -g) $HOME/.kube/config
+
+#- hosts: "{{ hostvars.localhost.groups.master | join(',') }}"
+- hosts: master
+  become: true
+  roles:
+    - start
+
+    # Implements Step 4 of http://kubernetes.io/docs/getting-started-guides/kubeadm/
+
+#    - name: Install pod network
+#      command: kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
+#      register: pod_network
+#      tags:
+#        - master
+#        - network
+
+#    - debug:
+#        var: pod_network.stdout_lines        
+
+#    - name: Copy
+#      fetch:
+#        src: /etc/kubernetes/admin.conf
+#        dest: remotes/{{ hostvars[groups['master'][0]]['cluster_name'] }}.conf
+#        flat: true
+#      tags:
+#        - master
+#        - remote
+
+#- hosts: master
+
+#  gather_facts: false
+
+
+#  become: true
+
+#  roles:
+
+#    - role: heapster
+#      tags:
+#        - master
+
+
+
+

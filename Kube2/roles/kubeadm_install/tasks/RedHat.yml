@@ -1,0 +1,90 @@
+#
+---
+
+# Implements the CentOS portion of Step 1 of http://kubernetes.io/docs/getting-started-guides/kubeadm/
+
+# cat <<EOF > /etc/yum.repos.d/kubernetes.repo
+# [kubernetes]
+# name=Kubernetes
+# baseurl=http://yum.kubernetes.io/repos/kubernetes-el7-x86_64
+# enabled=1
+# gpgcheck=1
+# repo_gpgcheck=1
+# gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg
+#        https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+# EOF
+
+# setenforce 0
+# yum install -y docker kubelet kubeadm kubectl kubernetes-cni
+# systemctl enable docker && systemctl start docker
+# systemctl enable kubelet && systemctl start kubelet
+
+
+- name: Add docker repo file
+  command: yum-config-manager --add-repo https://yum.dockerproject.org/repo/main/centos/7
+
+- name: Install Docker
+  command:  yum -y --nogpgcheck install docker-engine-1.12.6-1.el7.centos.x86_64
+
+#- name: copy docker json
+#  template:
+#    src: daemon.json
+#    dest: /etc/docker/daemon.json
+- name: docker start
+  command: systemctl enable docker
+- name: start docker
+  command: service docker start
+- name: copy docker json
+  template:
+    src: daemon.json
+    dest: /etc/docker/daemon.json
+- name: start docker
+  command: service docker restart
+
+- name: Add Kubernetes yum repo
+  yum_repository:
+    name: Kubernetes
+    description: Kubernetes
+    file: kubernetes
+    baseurl: http://yum.kubernetes.io/repos/kubernetes-el7-x86_64
+    enabled: true
+    gpgcakey: https://packages.cloud.google.com/yum/doc/yum-key.gpg
+    gpgkey: https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg  
+    gpgcheck: true
+    state: present
+
+- name: Workaround to https://github.com/kubernetes/kubernetes/pull/33555
+  command: setenforce 0
+  ignore_errors: true
+
+- name: Install Kubernets
+  command: yum install  kubectl-1.8.0-0  kubelet-1.8.0-0  kubernetes-cni-0.3.0.1-0.07a8a2 -y
+
+- name: Install kubeadm
+  command: yum install -y  http://yum.kubernetes.io/pool/d64bc1d0ca27196030c6f574252a0872b998b29be90c6cb7e97b91cd0bc78fed-kubeadm-1.8.2-0.x86_64.rpm
+#- name: enable docker
+#  command: sudo systemctl enable docker
+
+#- name: start docker
+#  command: service docker start
+
+- name: enable kubelet
+  command: systemctl enable kubelet
+
+- name: start
+  command:  service kubelet start
+
+
+
+#- name: Install kubeadm packages
+#  yum:
+#    name: '{{ kubeadm_packages | list }}'
+#    state: latest
+#    update_cache: true
+
+#- name: Enable and start kubeadm services
+#  service:
+#    name: '{{ item }}'
+#    enabled: true
+#    state: started
+#  with_items: '{{ kubeadm_services }}'
