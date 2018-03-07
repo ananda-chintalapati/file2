@@ -1,0 +1,12 @@
+ApplicationId: EFGH
+InstanceRoles:
+-   ID: AB_ID
+    Policies:
+    - Compute
+    PrincipalServices:
+    - ec2
+Policies:
+-   Name: Compute
+    Services:
+    - ec2
+    - efs
