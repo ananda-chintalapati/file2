@@ -1,0 +1,86 @@
+---
+# VSAD ID
+ApplicationId: EKYV
+
+# Requested Services (Policies are built from these definitions)
+Policies:
+  - 
+    Name: Compute1
+    Services:
+      - ec2
+      - elasticloadbalancing
+      - autoscaling
+      - cloudwatch
+      - ecs
+      - efs
+  - 
+    Name: Storage1
+    Services:
+      - s3
+     
+  - 
+    Name: Compute2
+    Services:
+      - lambda
+      - cloudwatch
+      
+    Name: db
+    Services:
+      - rds
+
+# Roles to be applied to EC2 Instances (Naming convention vz-instance-{{environment}}-{{account_name}}-{{VSAD ID}}-{{ID}})
+InstanceRoles:
+  - 
+    # Arbitrary ID for the role (Max 10 chars)
+    ID: EC2
+    # Policies to attach to this role
+    Policies:
+      - Compute1
+      - Storage1
+      - Storage2
+      - db
+    # Services that can assume this role
+    PrincipalServices:
+      - ec2
+     
+# Roles to be used by services other than EC2 (Naming convention vz-service-{{environment}}-{{account_name}}-{{VSAD ID}}-{{ID}})
+ServiceRoles:
+  - 
+    # Arbitrary ID for the role (Max 10 chars)
+    ID: lamb
+    # Policies to attach to this role
+    Policies:
+      - Compute1
+      - Compute2
+      - Storage1
+      - Storage2
+      - db
+    # Services that can assume this role
+    PrincipalServices:
+      - ec2
+       
+    ID: ecs
+    # Policies to attach to this role
+    Policies:
+      - Compute1
+      - Compute2
+      - Storage1
+      - Storage2
+      - db
+    # Services that can assume this role
+    PrincipalServices:
+      - ec2
+      - ecs
+      
+    ID: efs
+    # Policies to attach to this role
+    Policies:
+      - Compute1
+      - Compute2
+      - Storage1
+      - Storage2
+      - db
+    # Services that can assume this role
+    PrincipalServices:
+      - ec2
+      - efs  
