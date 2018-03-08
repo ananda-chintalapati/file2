@@ -46,4 +46,21 @@ class JenkinsClient():
         print 'Response %r' % response.json()
 
 
+    def clone_job(self, from_job, to_job):
+        from_job_xml = self.get_job_config(from_job)
+        resp = self.jenkins.create_job(to_job, from_job_xml)
+        return resp
+
+    def get_job_config(self, job_name):
+        return self.jenkins.get_job_config(job_name)
+
+    def check_latest_build_status(self, job_name):
+        job_info = self.jenkins.get_job_info(job_name)
+        last_build = job_info['lastBuild']['number']
+        response = self.jenkins.get_build_info(job_name, last_build)
+        return last_build, response['result']
+
+
+
+
 

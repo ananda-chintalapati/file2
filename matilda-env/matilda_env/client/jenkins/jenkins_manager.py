@@ -13,7 +13,7 @@ def trigger_instance_job(args={}):
         'ENV': 'NONPROD',
         'ImageID': args.get('image') or 'ami-0700067d',
         'SubnetID': 'subnet-77440712',
-        'StashRepoUrl': 'https://v678508@onestash.verizon.com/scm/ek/sample_repo.git',
+        'StashRepoUrl': 'https://v678508@onestash.verizon.com/scm/ek/sample_repo.git_client',
         'CloudFormationTemplate': 'EKYV-Matilda-CFT.json',
         'InstanceName': args.get('name') or 'VZ-EKYV-PQ-Matilda-Feb2018-remote-creation',
         'InstanceType': args.get('flavor') or 't2.xlarge'
