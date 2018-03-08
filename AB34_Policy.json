@@ -1,0 +1,24 @@
+ApplicationId: AB34
+InstanceRoles:
+-   ID: AB_ID
+    Policies:
+    - Compute
+    PrincipalServices:
+    - ec2
+Policies:
+-   Name: Compute
+    Services:
+    - ec2
+    - efs
+-   Name: Database
+    Services:
+    - rds
+-   Name: Compute2
+    Services:
+    - lambda
+ServiceRoles:
+-   ID: AB_ID
+    Policies:
+    - Compute
+    PrincipalServices:
+    - ec2
