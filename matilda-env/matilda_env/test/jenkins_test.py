@@ -61,8 +61,14 @@ def test_job_with_params():
     }
     print jc.build_job_params('param_test', params)
 
-test_job_info()
+def test_job_clone():
+    jc = JenkinsClient(url, user, token)
+    print jc.clone_job('param_test', 'param_test_clone')
+
+#test_job_info()
 #build_job()
 #test_job_curl()
 
 #test_job_with_params()
+
+test_job_clone()
