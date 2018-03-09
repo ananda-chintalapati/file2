@@ -1,6 +1,7 @@
 import getpass
 import jenkins
 import requests
+import subprocess
 
 class JenkinsClient():
 
@@ -45,6 +46,19 @@ class JenkinsClient():
         response = requests.get(url, auth=(self.user, self.token))
         print 'Response %r' % response.json()
 
+    def build_param_job_cmd(self, job_name, params):
+        user = self.user + ':' + self.token
+        url = self.url + '/job/' + job_name + '/buildWithParameters?token=' + self.token
+        query_str = '&'
+        for k, v in params.iteritems():
+            if v != None and v != '':
+                query_str = query_str + k + '=' + v + '&'
+        url = url + query_str
+        cmd = 'curl -v -u {} {}'.format(user, url)
+        p = subprocess.Popen(cmd, shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+        resp = p.communicate()
+        print p[0], p[1]
+        return resp
 
     def clone_job(self, from_job, to_job):
         from_job_xml = self.get_job_config(from_job)
@@ -60,6 +74,12 @@ class JenkinsClient():
         response = self.jenkins.get_build_info(job_name, last_build)
         return last_build, response['result']
 
+    def create_job_in_view(self, from_job, job_name):
+        from_job_xml = self.get_job_config(from_job)
+        user = self.user + ':' + self.token
+        url = self.url + '/view/EKYV-Automation/view/Matilda/createItem?name=' + job_name
+        response = requests.get(url, auth=(self.user, self.token), data=from_job_xml)
+        print 'Response %r' % response.json()
 
 
 

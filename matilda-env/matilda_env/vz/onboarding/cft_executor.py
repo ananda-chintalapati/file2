@@ -1,15 +1,13 @@
 import time
+import random
 
 from matilda_env.client.jenkins.jenkins_client import JenkinsClient
 
-def generate_keys(app_id, policy_name, stash_url, org_name='VES', env='NonProd', email_list=''):
+def run_cft(app_id, cft_name, args, org_name='VES', env='NonProd'):
     job_name = create_job(app_id, org_name, env)
-    resp = trigger_job(job_name, policy_name, stash_url, email_list)
+    resp = trigger_job(job_name, cft_name, args)
     job_status, build_no = wait_for_job_finish(job_name)
-    if job_status == 'success':
-        keys, roles = extract_keys(job_name, build_no)
-        return keys, roles
-    return None
+    return job_status
 
 def create_job(app_id, org_name='VES', env='NonProd'):
     parent_job = 'VES.EKYV.PQPolicyBuilder-Template.DIT'
@@ -18,18 +16,22 @@ def create_job(app_id, org_name='VES', env='NonProd'):
     response = jc.create_job_in_view(parent_job, app_job)
     return app_job
 
-def trigger_job(job_name, policy_name, stash_url, env='NonProd', acct='VES', email=''):
+def trigger_job(job_name, cft_name, args):
     args = {
-        'Stash URL': stash_url,
-        'ENV': env,
-        'Policy-Specification-Filename': policy_name,
-        'ACCT': acct,
-        'Email': email
+        'AppID': args.get('app_id'),
+        'StackName': args.get('stack_name') or get_stack_name(args.get('app_id')),
+        'AWS_REGION': args.get('region') or 'us-east-1',
+        'StashRepoUrl': 'https://v678508@onestash.verizon.com/scm/ek/matilda.git',
+        'CloudFormationTemplate': cft_name
     }
     jc = JenkinsClient()
-    response = jc.build_job_params(job_name, args)
+    response = jc.build_param_job_cmd(job_name, args)
     print 'Jenkins job response %r' % response
     return response
+
+def get_stack_name(app_id):
+    return 'VZ-' + app_id + 'Matilda' + str(random.randint(1, 99))
+
 
 def wait_for_job_finish(job_name):
     job_status = 'Pending'

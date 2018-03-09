@@ -17,12 +17,12 @@ class GitClient():
         origin = repo.remote('origin')
         origin.push()
 
-    def commit_files_cmd(self, app_id, file_list, repo_dir=None):
+    def commit_files_cmd(self, app_id, file_list, type, repo_dir=None):
         if repo_dir == None:
             repo_dir = '/opt/matilda/repo/matilda'
         for item in file_list:
             self.run_cmd('git add {}'.format(item), repo_dir)
-        commit_msg = '{} Policy File'.format(app_id)
+        commit_msg = '{} {} File'.format(app_id, type)
         self.run_cmd('git commit -m "{}"'.format(commit_msg), repo_dir)
         self.run_cmd('git push origin master', repo_dir)
 

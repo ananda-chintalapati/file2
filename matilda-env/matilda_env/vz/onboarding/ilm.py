@@ -28,7 +28,7 @@ def trigger_job(job_name, env='NonProd'):
         'ENV': env
     }
     jc = JenkinsClient()
-    response = jc.build_job_params(job_name, args)
+    response = jc.build_param_job_cmd(job_name, args)
     print 'Jenkins job response %r' % response
     return response
 

@@ -20,11 +20,11 @@ def install_tomcat(host, username=None, password=None):
     print 'Tomcat install output %r' % stdout
     print 'Tomcat install error %r' % stderr
 
-def deploy_application(warfile_location, host, username=None, password=None):
+def deploy_application(warfile_location, warfile_name, host, username=None, password=None):
     home = str(util.get_home_directory())
     if not home.endswith('/'):
         home = home + '/'
-    transfer.sftp_file(warfile_location, warfile_location, home + 'apache-tomcat-7.0.85/webapps',
+    transfer.sftp_file(warfile_location, '/tmp/' + warfile_name, home + 'apache-tomcat-7.0.85/webapps',
                            host, username, password)
     stdout, stderr = transfer.execute_command('sh /tmp/tomcat_restart.sh', host, 22, username, password,
                                               change_user='root')

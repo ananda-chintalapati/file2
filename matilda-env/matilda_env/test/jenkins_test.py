@@ -69,6 +69,6 @@ def test_job_clone():
 #build_job()
 #test_job_curl()
 
-#test_job_with_params()
+test_job_with_params()
 
-test_job_clone()
+#test_job_clone()

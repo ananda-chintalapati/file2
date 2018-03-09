@@ -146,6 +146,9 @@ def deploy_env(payload):
         flavor = payload.get('flavor_info').get('flavor')
         ip_address = jm.create_instance(name, flavor)
         install_service('tomcat', get_hosts('webserver'))
+
+        send_response_to_sn(payload, get_hosts('webserver'))
+    if 'application_info' in payload.keys():
         args = {
             'username': '',
             'password': '',
@@ -155,9 +158,10 @@ def deploy_env(payload):
         }
         deploy_application_to_wl(args, get_hosts('webserver'))
         send_response_to_sn(payload, get_hosts('webserver'))
-    if 'application_info' in payload.keys():
-        deploy_application_to_wl(args, get_hosts('webserver'))
-        send_response_to_sn(payload, get_hosts('webserver'))
+
+def get_war_file():
+    pass
+
 
 
 def install_service(service, ip_list):

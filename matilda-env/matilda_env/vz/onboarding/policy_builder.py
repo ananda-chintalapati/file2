@@ -44,5 +44,5 @@ def upload_file_to_repo(app_id, file, repo=None):
         repo = REPO_PATH
     file_list = [file]
     gc_client = GitClient()
-    gc_client.commit_files_cmd(app_id, file_list, repo)
+    gc_client.commit_files_cmd(app_id, file_list, 'Policy', repo)
     return REPO_PATH, file
