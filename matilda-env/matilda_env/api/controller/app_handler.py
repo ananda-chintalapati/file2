@@ -1,3 +1,4 @@
+import os
 import uuid
 import logging
 
@@ -102,3 +103,22 @@ def process_deploy_app_request(payload, source='ServiceNow', version='1'):
     rpc.invoke_notifier(ctxt=cntx, payload=payload,
                         source=source, version=version, action='deploy_app')
 
+def save_policy_req(req_id, type, data):
+    path = '/opt/matilda/requests/' + req_id
+    if not os.path.exists(path):
+        os.mkdir(path)
+    file_name = str(type) + '.json'
+    with open(path + file_name, 'w') as f:
+        f.write(data)
+    return True
+
+def trigger_backend(req_id):
+    DIR = '/opt/matilda/requests/' + req_id
+    file_count = len([name for name in os.listdir(DIR) if os.path.isfile(os.path.join(DIR, name))])
+    if file_count == 3:
+        cntx = {'req_id': str(uuid.uuid4())}
+        payload = {'request_id': req_id}
+        rpc = rpcapi.RpcAPI()
+        LOG.info('Posting payload %r' % payload)
+        rpc.invoke_notifier(ctxt=cntx, payload=payload,
+                            source='', version='1', action='vz_pol')

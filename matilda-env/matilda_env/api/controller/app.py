@@ -53,6 +53,31 @@ def create_environment_v2():
     app_handler.process_create_env_request(req_data['request'])
     return {'status':'submitted'}
 
+
+@app.route('/matilda/vz/policy', methods=['POST'])
+def create_policies():
+    req_data = request.get_json()
+    print 'req data %r' % req_data
+    # task_flow = sn_task_builder.prepare_tasks(req_data['request'])
+    app_handler.process_create_env_request(req_data['request'])
+    return {'status': 'submitted'}
+
+@app.route('/matilda/vz/ilm', methods=['POST'])
+def create_encrypted_ami():
+    req_data = request.get_json()
+    print 'req data %r' % req_data
+    # task_flow = sn_task_builder.prepare_tasks(req_data['request'])
+    app_handler.process_create_env_request(req_data['request'])
+    return {'status': 'submitted'}
+
+@app.route('/matilda/vz/cft', methods=['POST'])
+def create_cft():
+    req_data = request.get_json()
+    print 'req data %r' % req_data
+    # task_flow = sn_task_builder.prepare_tasks(req_data['request'])
+    app_handler.process_create_env_request(req_data['request'])
+    return {'status': 'submitted'}
+
 def sn_env_request():
     payload = json.loads(request.data)
 

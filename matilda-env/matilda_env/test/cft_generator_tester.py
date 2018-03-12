@@ -10,12 +10,23 @@ def test_create_cft():
         "subnet_id": 'subnet-77440712'
     }
 
-    cg.generate_cft_file(args)
+    print cg.get_cft_data(args, 'cft_template.json')
 
 def test_run_cft():
     args = {
 
     }
     ce.run_cft('AB15')
+
+
+def test_cft_text():
+    args = {
+        "app_id": 'AB15',
+        "instance_name": 'Matilda10',
+        "image_id": 'ami-0700067d',
+        "subnet_id": 'subnet-77440712'
+    }
+
+    print cg.prepare_cft(args)
 
 test_create_cft()

@@ -5,6 +5,7 @@ import six
 from matilda_env.client import rpcengine
 from matilda_env.services.env_executor.v1 import env_executor as ev1
 from matilda_env.services.env_executor import env_executor as ev2
+from matilda_env.services.env_executor.v1 import req_handler as rh
 
 import logging
 
@@ -112,5 +113,7 @@ class WorkerThread(threading.Thread):
             elif action == 'deploy_app':
                 ev1.deploy_application_to_wl(payload['args'], payload['hosts'])
                 ev1.send_response_to_sn(payload, payload['hosts'])
+            elif action == 'vz_pol':
+                rh.prepare_backend_req(payload['request_id'])
         else:
             ev2.execute_payload(payload)

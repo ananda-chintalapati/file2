@@ -6,16 +6,22 @@ import subprocess
 class JenkinsClient():
 
     def __init__(self, url=None, user=None, token=None):
+        self.view_name = '/view/EKYV-Automation/view/Matilda'
+
         if url == None:
-            self.url = 'https://onejenkins.verizon.com/ves'
+            #self.url = 'https://onejenkins.verizon.com/ves'
+            self.url = 'http://localhost:3000'
         else:
             self.url = url
+        self.url = self.url + self.view_name
         self.user = user
         if user == None:
             self.user = getpass.getuser()
+        self.user = 'admin'
         self.token = token
         if token == None:
             self.token = '24a8cccc018b3f4c493333c91a2478a0'
+            self.token = '5b9575fb7ed9cfa8f0e4def647e9ddb2'
         self.jenkins = jenkins.Jenkins(self.url, username=self.user, password=self.token)
 
 
@@ -34,11 +40,12 @@ class JenkinsClient():
     def get_build_console_output(self, name, number):
         return self.jenkins.get_build_console_output(name, number)
 
+
     def get_job_info_curl(self, job_name):
         user = self.user + ':' + self.token
-        url = self.url + '/job/' + job_name + '/api/json'
+        url = self.url + '/view/EKYV-Automation/view/Matilda/job/' + job_name + '/api/json'
         response = requests.get(url, auth=(self.user, self.token))
-        print 'Response %r' % response.json()
+        print 'Response %r' % response
 
     def build_param_job_curl(self, job_name):
         user = self.user + ':' + self.token
@@ -48,7 +55,7 @@ class JenkinsClient():
 
     def build_param_job_cmd(self, job_name, params):
         user = self.user + ':' + self.token
-        url = self.url + '/job/' + job_name + '/buildWithParameters?token=' + self.token
+        url = self.url + '/view/EKYV-Automation/view/Matilda/job/' + job_name + '/buildWithParameters?token=' + self.token
         query_str = '&'
         for k, v in params.iteritems():
             if v != None and v != '':
@@ -61,12 +68,18 @@ class JenkinsClient():
         return resp
 
     def clone_job(self, from_job, to_job):
-        from_job_xml = self.get_job_config(from_job)
-        resp = self.jenkins.create_job(to_job, from_job_xml)
-        return resp
+        if not self.jenkins.job_exists(to_job):
+            from_job_xml = self.get_job_config(from_job)
+            resp = self.jenkins.create_job(to_job, from_job_xml)
+            return resp
 
     def get_job_config(self, job_name):
         return self.jenkins.get_job_config(job_name)
+        #user = self.user + ':' + self.token
+        #url = self.url + '/view/EKYV-Automation/view/Matilda/job/' + job_name + '/config.xml'
+        #response = requests.get(url, auth=(self.user, self.token))
+        #print 'Response %r' % response.content
+
 
     def check_latest_build_status(self, job_name):
         job_info = self.jenkins.get_job_info(job_name)
@@ -79,7 +92,7 @@ class JenkinsClient():
         user = self.user + ':' + self.token
         url = self.url + '/view/EKYV-Automation/view/Matilda/createItem?name=' + job_name
         response = requests.get(url, auth=(self.user, self.token), data=from_job_xml)
-        print 'Response %r' % response.json()
+        print 'Response %r' % response
 
 
 

@@ -1,0 +1,123 @@
+{
+   "AWSTemplateFormatVersion":"2010-09-09",
+   "Description":" ",
+   "Parameters" : {
+    "AppID" : {
+      "Type" : "String",
+      "Default": "{{ app_id }}"
+    },
+    "UserID" : {
+      "Type" : "String",
+      "Default": "{{ user_id }}"
+
+    },
+    "InstanceName" : {
+      "Description" : "Name of instance",
+      "Type" : "String",
+      "Default": "{{ instance_name }}"
+    },
+    "Role" : {
+      "Description" : "App, Web, DB",
+      "Type" : "String",
+      "Default" : "App"
+    },
+    "IAMInstanceProfile": {
+       "Description": "The IAM role to apply to the instance",
+       "Type": "String",
+       "Default" : "{{ instance_profile }}"
+    },
+       "SecurityGroupIds": {
+       "Description": "Security groups that can be used to access the EC2 instances",
+       "Type": "List<AWS::EC2::SecurityGroup::Id>",
+       "Default": "{{ sec_groups }}"
+    },
+    "ImageID": {
+       "Description": "AMI ID",
+       "Type": "AWS::EC2::Image::Id",
+       "Default": "{{ image_id }}"
+    },
+    "SubnetID": {
+       "Description": "The subnet ID to use.",
+       "Type": "AWS::EC2::Subnet::Id",
+       "Default": "{{ subnet_id }}"
+    }
+  },
+   "Resources":{
+      "EC2Instance":{
+         "Type":"AWS::EC2::Instance",
+         "Properties":{
+            "InstanceType": "t2.xlarge",
+            "ImageId": { "Ref" : "ImageID" },
+            "IamInstanceProfile": { "Ref" : "IAMInstanceProfile" },
+            "SecurityGroupIds":  { "Ref" : "SecurityGroupIds" },
+            "SubnetId": { "Ref" : "SubnetID"},
+			"BlockDeviceMappings": [
+			{
+				"DeviceName": "/dev/sda1",
+				"Ebs": {
+					"VolumeSize": "35",
+					"DeleteOnTermination": true,
+                    "VolumeType": "gp2"
+				}
+			},
+			{
+				"DeviceName": "/dev/sdb",
+				"Ebs": {
+					"VolumeSize": "60",
+					"DeleteOnTermination": true,
+                    "VolumeType": "gp2"
+				}
+			}
+			],
+            "Tags":[
+			   {
+                  "Key":"UserID",
+                  "Value": { "Ref" : "UserID" }
+               },
+               {
+                  "Key":"Vsad",
+                  "Value": { "Ref" : "AppID" }
+               },
+               {
+                  "Key":"Name",
+                  "Value": { "Ref" : "InstanceName" }
+               },
+               {
+               	  "Key":"Role",
+               	  "Value": { "Ref" : "Role" }
+               },
+               {
+               	  "Key":"nostop",
+               	  "Value": "nostop"
+               }
+            ]
+         }
+      }
+   },
+   "Outputs":{
+      "InstanceId":{
+         "Description":"InstanceId of the newly created EC2 instance",
+         "Value":{
+            "Ref":"EC2Instance"
+         }
+      },
+      "AZ":{
+         "Description":"Availability Zone of the newly created EC2 instance",
+         "Value":{
+            "Fn::GetAtt":[
+               "EC2Instance",
+               "AvailabilityZone"
+            ]
+         }
+      },
+          "PrivateIP":{
+         "Description":"PrivateIP of the newly created EC2 instance",
+         "Value":{
+            "Fn::GetAtt":[
+               "EC2Instance",
+               "PrivateIp"
+            ]
+         }
+      }
+   }
+}

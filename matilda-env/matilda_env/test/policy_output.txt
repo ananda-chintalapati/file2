@@ -1,0 +1,68 @@
+Started by user Amin, Shahrzad
+[EnvInject] - Loading node environment variables.
+Building remotely on CSIS-vzpolicyworker-nonprod-2 (VZPolicy) in workspace /data/jenkins/ves/workspace/VES.EKYV.PQPolicyBuilder.DIT
+Cloning the remote Git repository
+Cloning repository https://onestash.verizon.com/scm/ek/sample_repo.git
+ > git init /data/jenkins/ves/workspace/VES.EKYV.PQPolicyBuilder.DIT # timeout=10
+Fetching upstream changes from https://onestash.verizon.com/scm/ek/sample_repo.git
+ > git --version # timeout=10
+ > git fetch --tags --progress https://onestash.verizon.com/scm/ek/sample_repo.git +refs/heads/*:refs/remotes/origin/*
+ > git config remote.origin.url https://onestash.verizon.com/scm/ek/sample_repo.git # timeout=10
+ > git config --add remote.origin.fetch +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git config remote.origin.url https://onestash.verizon.com/scm/ek/sample_repo.git # timeout=10
+Fetching upstream changes from https://onestash.verizon.com/scm/ek/sample_repo.git
+ > git fetch --tags --progress https://onestash.verizon.com/scm/ek/sample_repo.git +refs/heads/*:refs/remotes/origin/*
+ > git rev-parse refs/remotes/origin/master^{commit} # timeout=10
+ > git rev-parse refs/remotes/origin/origin/master^{commit} # timeout=10
+Checking out Revision da5a59f1850c06860f74fdacadfdbc528db4b644 (refs/remotes/origin/master)
+Commit message: "EKYVPQPolicy.yml edited online with Bitbucket - Added EFS Policy"
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f da5a59f1850c06860f74fdacadfdbc528db4b644
+ > git rev-list f50b8401f4d6281dbf6b317bd99806d02487dcae # timeout=10
+[VES.EKYV.PQPolicyBuilder.DIT] $ vzpolicy register -s ves -j VES.EKYV.PQPolicyBuilder.DIT -n shahrzad.amin@one.verizon.com,pavankumar.karnam@one.verizon.com
+Registering VZPolicy job
+Successfully registered VZPolicy job.
+validateCommand:vzpolicy validate -f /data/jenkins/ves/workspace/VES.EKYV.PQPolicyBuilder.DIT/EKYVPQPolicy.yml
+buildCommand:vzpolicy build -f /data/jenkins/ves/workspace/VES.EKYV.PQPolicyBuilder.DIT/EKYVPQPolicy.yml -a VES-NP -e NonProd -o /data/jenkins/ves/workspace/VES.EKYV.PQPolicyBuilder.DIT/outputs
+testCommand:vzpolicy test -f /data/jenkins/ves/workspace/VES.EKYV.PQPolicyBuilder.DIT/EKYVPQPolicy.yml -a VES-NP -e NonProd -o /data/jenkins/ves/workspace/VES.EKYV.PQPolicyBuilder.DIT/outputs
+deployCommand:vzpolicy deploy -f /data/jenkins/ves/workspace/VES.EKYV.PQPolicyBuilder.DIT/EKYVPQPolicy.yml -a VES-NP -e NonProd -o /data/jenkins/ves/workspace/VES.EKYV.PQPolicyBuilder.DIT/outputs
+[VES.EKYV.PQPolicyBuilder.DIT] $ vzpolicy validate -f /data/jenkins/ves/workspace/VES.EKYV.PQPolicyBuilder.DIT/EKYVPQPolicy.yml
+Validating AppSpec file /data/jenkins/ves/workspace/VES.EKYV.PQPolicyBuilder.DIT/EKYVPQPolicy.yml
+PolicySpec file is valid.
+[VES.EKYV.PQPolicyBuilder.DIT] $ vzpolicy build -f /data/jenkins/ves/workspace/VES.EKYV.PQPolicyBuilder.DIT/EKYVPQPolicy.yml -a VES-NP -e NonProd -o /data/jenkins/ves/workspace/VES.EKYV.PQPolicyBuilder.DIT/outputs
+Building CloudFormation Templates from /data/jenkins/ves/workspace/VES.EKYV.PQPolicyBuilder.DIT/EKYVPQPolicy.yml
+PolicySpec file is valid.
+EKYV CloudFormation templates successfully built in ["/data/jenkins/ves/workspace/VES.EKYV.PQPolicyBuilder.DIT/outputs/EKYV"]
+[VES.EKYV.PQPolicyBuilder.DIT] $ vzpolicy test -f /data/jenkins/ves/workspace/VES.EKYV.PQPolicyBuilder.DIT/EKYVPQPolicy.yml -a VES-NP -e NonProd -o /data/jenkins/ves/workspace/VES.EKYV.PQPolicyBuilder.DIT/outputs
+PolicySpec file is valid.
+/data/jenkins/ves/workspace/VES.EKYV.PQPolicyBuilder.DIT/outputs/EKYV/VzPol-EKYV-KMS-Key.json is a valid CloudFormation template.
+/data/jenkins/ves/workspace/VES.EKYV.PQPolicyBuilder.DIT/outputs/EKYV/VzPol-EKYV-Access-Control.json is a valid CloudFormation template.
+[VES.EKYV.PQPolicyBuilder.DIT] $ vzpolicy deploy -f /data/jenkins/ves/workspace/VES.EKYV.PQPolicyBuilder.DIT/EKYVPQPolicy.yml -a VES-NP -e NonProd -o /data/jenkins/ves/workspace/VES.EKYV.PQPolicyBuilder.DIT/outputs -n shahrzad.amin@one.verizon.com,pavankumar.karnam@one.verizon.com
+PolicySpec file is valid.
+VzPol-EKYV-Access-Control exists. Updating stack...
+Waiting for VzPol-EKYV-Access-Control to update...
+VzPol-EKYV-Access-Control updated.
+VzPolserviceNonProdVESNPEKYVrdsArn: arn:aws:iam::759031157600:role/VzPol-service-NonProd-VES-NP-EKYV-rds
+
+VzPolprofileNonProdVESNPEKYVcompArn: arn:aws:iam::759031157600:instance-profile/VzPol-profile-NonProd-VES-NP-EKYV-comp
+
+VzPolinstanceNonProdVESNPEKYVcompArn: arn:aws:iam::759031157600:role/VzPol-instance-NonProd-VES-NP-EKYV-comp
+
+VzPolserviceNonProdVESNPEKYVlambArn: arn:aws:iam::759031157600:role/VzPol-service-NonProd-VES-NP-EKYV-lamb
+
+VzPol-EKYV-KMS-Key exists in us-east-1. Updating stack...
+Waiting for VzPol-EKYV-KMS-Key in us-east-1 to update...
+VzPol-EKYV-KMS-Key in us-east-1 updated.
+EKYV KMS Key Alias: alias/VzPol-EKYV-NonProd-key-alias
+
+EKYV KMS Key ARN: arn:aws:kms:us-east-1:759031157600:key/XXXXXXXXX
+
+VzPol-EKYV-KMS-Key exists in us-west-2. Updating stack...
+Waiting for VzPol-EKYV-KMS-Key in us-west-2 to update...
+VzPol-EKYV-KMS-Key in us-west-2 updated.
+EKYV KMS Key Alias: alias/VzPol-EKYV-NonProd-key-alias
+
+EKYV KMS Key ARN: arn:aws:kms:us-west-2:759031157600:key/XXXXXXXXX
+
+Notifying upstream projects of job completion
+Finished: SUCCESS

@@ -1,26 +1,26 @@
 import time
 
 from matilda_env.client.jenkins.jenkins_client import JenkinsClient
+from matilda_env.vz.onboarding import jenkins_console_reader as jcr
 
-def generate_keys(app_id, policy_name, stash_url, org_name='VES', env='NonProd', email_list=''):
+def generate_keys(app_id, policy_name, stash_url=None, org_name='VES', env='NonProd', email_list=''):
     job_name = create_job(app_id, org_name, env)
     resp = trigger_job(job_name, policy_name, stash_url, email_list)
     job_status, build_no = wait_for_job_finish(job_name)
     if job_status == 'success':
-        keys, roles = extract_keys(job_name, build_no)
-        return keys, roles
+        inst_profile, keys, roles = extract_keys(job_name, build_no)
+        return inst_profile, keys, roles
     return None
 
 def create_job(app_id, org_name='VES', env='NonProd'):
     parent_job = 'VES.EKYV.PQPolicyBuilder-Template.DIT'
     app_job = '.'.join([org_name, app_id, 'PolicyBuilder', env])
     jc = JenkinsClient()
-    response = jc.create_job_in_view(parent_job, app_job)
+    response = jc.clone_job(parent_job, app_job)
     return app_job
 
-def trigger_job(job_name, policy_name, stash_url, env='NonProd', acct='VES', email=''):
+def trigger_job(job_name, policy_name, stash_url, env='NonProd', acct='VES', email='shahrzad.amin@verizon.com'):
     args = {
-        'Stash URL': stash_url,
         'ENV': env,
         'Policy-Specification-Filename': policy_name,
         'ACCT': acct,
@@ -68,7 +68,8 @@ def extract_keys(job_name, build_no):
                 key = items[1].split('key/')
                 keys['us-west-2'] = key[1]
             keys_list.append(keys)
-
+    inst_profile = jcr.get_role_alias(output)
     print 'Keys %s' % keys_list
     print 'Roles %s' % roles
-    return keys_list, roles
+    print 'Instance Profile %s' % inst_profile
+    return inst_profile, keys_list, roles
